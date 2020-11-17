@@ -7,7 +7,11 @@
 		(org.fife.ui.rsyntaxtextarea RSyntaxTextArea SyntaxConstants TokenMakerFactory))
 	(:require 
 		  [clojure.string :as s]
-		  [clojure.contrib.string :as cs]))
+		  ))
+(defn replace-char
+  "Replaces all instances of character a with character b in s."
+  [^Character a ^Character b ^String s]
+  (.replace s a b))
 
 (def alphabet ["x" "y" "z" "w" "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v"])
 (def global-class-name (atom nil))
@@ -192,8 +196,8 @@
 	[obj]
 	(swap! global-class-name (fn [_] (s/join (drop 6 (str (type obj))))))
 	(let [members (:members (reflect obj))
-		  header (str "(ns " (cs/replace-char \. \_ (underscore @global-class-name)) ".core)\n\n\n")
-		  file-name (str (cs/replace-char \. \_ (underscore @global-class-name)) ".clj")]
+		  header (str "(ns " (replace-char \. \_ (underscore @global-class-name)) ".core)\n\n\n")
+		  file-name (str (replace-char \. \_ (underscore @global-class-name)) ".clj")]
 		(->> members
 			(map parse-method)  
   			(apply str)
